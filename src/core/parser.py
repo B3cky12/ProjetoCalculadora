@@ -1,3 +1,14 @@
+#testando o que aprendi
+class ParseError(Exception):
+    def __init__(self, pos, msg, *args):
+        self.pos = pos # posição do texto
+        self.msg = msg
+        self.args = args
+    
+    def __str__(self):
+        return '%s at position %s' % (self.msg % self.args, self.pos)
+
+
 # quanto mais eu leio sobre parsers, mais eu penso que esse código não vai ser a versão final, mas o exercício mental é válido por hora
 def parse_nele(expressao: str):
     # A estrutura com a expressão decodificada, organizada na ordem de resolução
