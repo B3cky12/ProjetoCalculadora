@@ -6,7 +6,9 @@ class ParseError(Exception):
         self.args = args
     
     def __str__(self):
+        # a mensagem de erro
         return '%s at position %s' % (self.msg % self.args, self.pos)
+
 
 
 # quanto mais eu leio sobre parsers, mais eu penso que esse código não vai ser a versão final, mas o exercício mental é válido por hora
@@ -14,7 +16,7 @@ def parse_nele(expressao: str):
     # A estrutura com a expressão decodificada, organizada na ordem de resolução
     parsed = []
     
-    for index, char in enumerate(expressao):
+    for index, char in range(enumerate(expressao)):
         # Primeira regra do PEMDAS: Parênteses
         if char == "(":
             start = index +1
@@ -26,7 +28,7 @@ def parse_nele(expressao: str):
             # possível teste para avaliar necessidade desse elif
             continue
     
-    for index, char in enumerate(expressao):
+    for index, char in range(enumerate(expressao)):
         # Segunda regra do PEMDAS: Expoentes
         if char == "^":
             # pensamento: loop reverso iniciado no ^, pra achar index que começa o bloco do número que é a base da potenciação; depois loop com direção normal pra encontrar o index que termina o bloco de número que é o expoente;
@@ -35,8 +37,7 @@ def parse_nele(expressao: str):
             for i, x in range(enumerate(expressao)[index-1], 0, -1):
                 now = {i: x}
                 if type(x) is int:
-                    last = {i: x}
-                    continue
+                    last = now
                 else:
                     break
             base = expressao[last[i]:index-1]
@@ -46,8 +47,7 @@ def parse_nele(expressao: str):
             for i, x in range(enumerate(expressao)[index+1]):
                 now = {i: x}
                 if type(x) is int:
-                    last = {i: x}
-                    continue
+                    last = now
                 else:
                     break
             expo = expressao[index+1:last[i]]
