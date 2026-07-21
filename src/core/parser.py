@@ -9,6 +9,7 @@ class ParseError(Exception):
         # a mensagem de erro
         return '%s at position %s' % (self.msg % self.args, self.pos)
 
+# the base parser
 class Parser:
     def __init__(self):
         self.cache = {}
@@ -153,3 +154,131 @@ class Parser:
                 self.text[last_error_pos]
             )
     
+    def maybe_char(self, chars=None):
+        try:
+            return self.char(chars)
+        except ParseError:
+            return None
+    
+    def maybe_match(self, *rules):
+        try:
+            return self.match(*rules)
+        except ParseError:
+            return None
+    
+    def maybe_keyword(self, *keywords):
+        try:
+            return self.keyword(*keywords)
+        except ParseError:
+            return None
+
+# the calculator parser
+class CalcParser(Parser):
+    def start(self):
+        return self.expression()
+    
+    # Expression -> Term(("+"|"-")Term)*
+    def expression(self):
+        rv = self.match('term')
+        while True:
+            op = self.maybe_keyword('+', '-')
+            if op is None:
+                break
+            
+            term = self.match('term')
+            if op == '+':
+                rv += term
+            else:
+                rv -= term
+            
+        return rv
+    
+    # Term -> Factor(('*'|'/')Factor)*
+    def term(self):
+        rv = self.match('factor')
+        while True:
+            op = self.maybe_keyword('*', '/')
+            if op is None:
+                break
+            
+            term = self.match('factor')
+            if op == '*':
+                rv *= term
+            else:
+                rv /= term
+        
+        return rv
+    
+    # Factor -> Part(('^'|'\^')Part)*
+    def factor(self):
+        rv = self.match('part')
+        while True:
+            op = self.maybe_keyword('^', '\^')
+            if op is None:
+                break
+            
+            term = self.match('part')
+            if op == '^':
+                rv *= term
+            else:
+                rv /= term
+        
+        return rv
+    
+    # Part -> "("Expression")"|Number
+    def part(self):
+        if self.maybe_keyword('('):
+            rv = self.match('expression')
+            self.keyword(')')
+            
+            return rv
+
+        return self.match('number')
+    
+    def number(self):
+        chars = []
+        # pra colocar os numbers
+        
+        sign = self.maybe_keyword('+', '-')
+        # checando sinal
+        if sign is not None:
+            chars.append(sign)
+        
+        chars.append(self.char('0-9'))
+        
+        while True:
+            char = self.maybe_char('0-9')
+            if char is None:
+                break
+            
+            chars.append(char)
+        
+        # porque números podem ser quebrados
+        if self.maybe_char('.'):
+            chars.append('.')
+            chars.append(self.char('0-9'))
+            
+            while True:
+                char = self.maybe_char('0-9')
+                if char is None:
+                    break
+                
+                chars.append(char)
+        
+        rv = float(''.join(chars))
+        return rv
+
+# now global
+if __name__ == '__main__':
+    parser = CalcParser()
+    
+    while True:
+        try:
+            print(parser.parse(input('> ')))
+        except KeyboardInterrupt:
+            print()
+        except (EOFError, SystemExit):
+            print()
+            break
+        except (ParseError, ZeroDivisionError) as e:
+            print('Error: %s' % e)
