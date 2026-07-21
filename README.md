@@ -22,7 +22,7 @@
 
 <h3 align="center">Projeto Calculadora Pocket</h3>
 
-    <p align="center">
+<p align="center">
     Esse Projeto constitui uma calculadora inspirada naquelas de bolso. Versão 1.0 em construção.
     <br />
     <a href="https://github.com/B3cky12/ProjetoCalculadora/tree/main"><strong>Explore the docs »</strong></a>
@@ -33,7 +33,7 @@
     <a href="https://github.com/B3cky12/ProjetiCalculadora/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     &middot;
     <a href="https://github.com/B3cky12/ProjetoCalculadora/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
-    </p>
+</p>
 
 </div>
 
